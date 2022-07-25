@@ -21,7 +21,9 @@ public class Parser {
         if (differences.size() > 0) {
             result.append("{\n");
             differences.entrySet().stream()
+                    .sorted(Map.Entry.comparingByKey())
                     .forEach(mapEntry -> {
+                        System.out.println(mapEntry.getKey());
                         switch (mapEntry.getValue()) {
                             case (ITEM_UNCHANGED):
                                 result.append(String.format("    %s: %s\n", mapEntry.getKey(),

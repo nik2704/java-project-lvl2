@@ -43,9 +43,9 @@ public final class TestApp {
     public void testJsonComparison() {
         try {
             String correctAnswer1 = "{\n"
-                    + "  - proxy: 123.234.53.22\n"
-                    + "    host: hexlet.io\n"
                     + "  - follow: false\n"
+                    + "    host: hexlet.io\n"
+                    + "  - proxy: 123.234.53.22\n"
                     + "  - timeout: 50\n"
                     + "  + timeout: 20\n"
                     + "  + verbose: true\n"
@@ -58,9 +58,9 @@ public final class TestApp {
             assertThat(diff1yml).isEqualTo(correctAnswer1);
 
             String correctAnswer2 = "{\n"
-                    + "  + proxy: 123.234.53.22\n"
-                    + "    host: hexlet.io\n"
                     + "  + follow: false\n"
+                    + "    host: hexlet.io\n"
+                    + "  + proxy: 123.234.53.22\n"
                     + "  - timeout: 20\n"
                     + "  + timeout: 50\n"
                     + "  - verbose: true\n"
