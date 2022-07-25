@@ -74,6 +74,12 @@ public class Differ {
     }
 
     public static String generate(String filePath1, String filePath2, String format) throws Exception {
+        if (filePath1.isEmpty() || filePath1 == null || filePath2.isEmpty() || filePath2 == null) {
+            throw new NullPointerException("The paramentres 'filePath1' and 'filePath2' must be not empty!");
+        }
+
+        StringBuilder result = new StringBuilder();
+
         String formatUsed = format.toLowerCase();
         if (!FORMAT_LIST.contains(formatUsed)) {
             throw new Exception(String.format("There is no such format '%s'", format));
@@ -99,29 +105,34 @@ public class Differ {
         Map<String, String> differences = genDiff(jsonMap1, jsonMap2);
 
         if (differences.size() > 0) {
-            System.out.println("{");
+            result.append("{\n");
             differences.entrySet().stream()
                     .forEach(mapEntry -> {
                         switch (mapEntry.getValue()) {
                             case (ITEM_UNCHANGED):
-                                System.out.format("    %s: %s\n", mapEntry.getKey(), jsonMap1.get(mapEntry.getKey()));
+                                result.append(String.format("    %s: %s\n", mapEntry.getKey(),
+                                        jsonMap1.get(mapEntry.getKey())));
                                 break;
                             case (ITEM_CHANGED):
-                                System.out.format("  - %s: %s\n", mapEntry.getKey(), jsonMap1.get(mapEntry.getKey()));
-                                System.out.format("  + %s: %s\n", mapEntry.getKey(), jsonMap2.get(mapEntry.getKey()));
+                                result.append(String.format("  - %s: %s\n", mapEntry.getKey(),
+                                        jsonMap1.get(mapEntry.getKey())));
+                                result.append(String.format("  + %s: %s\n", mapEntry.getKey(),
+                                        jsonMap2.get(mapEntry.getKey())));
                                 break;
                             case (ITEM_DELETED):
-                                System.out.format("  - %s: %s\n", mapEntry.getKey(), jsonMap1.get(mapEntry.getKey()));
+                                result.append(String.format("  - %s: %s\n", mapEntry.getKey(),
+                                        jsonMap1.get(mapEntry.getKey())));
                                 break;
                             case (ITEM_ADDED):
-                                System.out.format("  + %s: %s\n", mapEntry.getKey(), jsonMap1.get(mapEntry.getKey()));
+                                result.append(String.format("  + %s: %s\n", mapEntry.getKey(),
+                                        jsonMap1.get(mapEntry.getKey())));
                                 break;
                             default:
                         }
                     });
-            System.out.println("}");
+            result.append("}");
         } else {
-            System.out.println("{}");
+            result.append("{}");
         }
 
 //        for (Map.Entry<String, String> mapEntry : differences.entrySet()) {
@@ -135,7 +146,8 @@ public class Differ {
 //                .writer()
 //                .withDefaultPrettyPrinter()
 //                .writeValueAsString(differences));
-        return "";
+        System.out.println(result.toString());
+        return result.toString();
     }
 
 }
