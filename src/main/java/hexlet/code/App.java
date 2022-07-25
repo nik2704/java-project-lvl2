@@ -5,53 +5,56 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.Callable;
 
-import static picocli.CommandLine.Help.Visibility.NEVER;
 
-
-//public class App implements Callable<Integer> {
 @Command(name = "gendiff",
         description="Compares two configuration files and shows a difference.",
         headerHeading="%n")
-public class App {
+public class App implements Callable<Integer> {
     private final String OUTPUT_FORMAT = "stylish";
 
-    @Option(names = {"-f", "--format"},
+    @Option(names = { "-f", "--format" },
             paramLabel = "format",
-            description = "output format [default: " + OUTPUT_FORMAT +"]",
-            showDefaultValue = NEVER,
-            defaultValue = OUTPUT_FORMAT)
+            defaultValue = OUTPUT_FORMAT,
+            description = "output format [default: ${DEFAULT-VALUE}]")
     String format;
 
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "Show this help message and exit.")
-    boolean usageHelpRequested;
+    private boolean usageHelpRequested;
 
     @Option(names = {"-V", "--version"}, versionHelp = true, description = "Print version information and exit.")
-    boolean versionInfoRequested;
+    private boolean versionInfoRequested;
 
-    @Parameters(paramLabel="filepath1", description = "path to first file")
-    File filepath1;
+    @Parameters(paramLabel="filepath1", index = "0", description = "path to first file")
+    private String filePath1;
 
-    @Parameters(paramLabel="filepath2", description = "path to second file")
-    File filepath2;
-    public static void main(String[] args) {
-//        int exitCode = new CommandLine(new App()).execute(args);
+    @Parameters(paramLabel="filepath2", index = "1", description = "path to second file")
+    private String filePath2;
+    public static void main (String[] args) throws Exception {
+        int exitCode = 0;
         CommandLine commandLine = new CommandLine(new App());
         commandLine.parseArgs(args);
         if (commandLine.isUsageHelpRequested()) {
             commandLine.usage(System.out);
-            return;
         } else if (commandLine.isVersionHelpRequested()) {
             commandLine.printVersionHelp(System.out);
-            return;
+        } else {
+            exitCode = commandLine.execute(args);
         }
-//        System.exit(exitCode);
+        System.exit(exitCode);
     }
 
-//    @Override
-//    public Integer call() throws Exception {
-//        return null;
-//    }
+    @Override
+    public Integer call() throws Exception {
+        try {
+            String diff = Differ.generate(this.filePath1, this.filePath2, this.format);
+        } catch (IOException err) {
+            System.out.println("Unable to process: " + err.getMessage());
+        } catch (Exception err) {
+            System.out.println("The error: " + err.getMessage());
+        }
+        return null;
+    }
 }
