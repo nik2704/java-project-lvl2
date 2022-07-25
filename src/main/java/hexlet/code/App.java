@@ -19,7 +19,7 @@ public final class App implements Callable<Integer> {
             paramLabel = "format",
             defaultValue = OUTPUT_FORMAT,
             description = "output format [default: ${DEFAULT-VALUE}]")
-    private String format;
+    private String outputFormat;
 
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "Show this help message and exit.")
     private boolean usageHelpRequested;
@@ -49,7 +49,7 @@ public final class App implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         try {
-            String diff = Differ.generate(this.filePath1, this.filePath2, this.format);
+            String diff = Differ.generate(this.filePath1, this.filePath2, this.outputFormat);
         } catch (IOException err) {
             System.out.println("Unable to process: " + err.getMessage());
         } catch (Exception err) {

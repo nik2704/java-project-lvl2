@@ -1,103 +1,47 @@
 package hexlet.code;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import hexlet.code.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
 
 public final class Differ {
-    private static final String ITEM_UNCHANGED = "unchanged";
-    private static final String ITEM_CHANGED = "changed";
-    private static final String ITEM_DELETED = "deleted";
-    private static final String ITEM_ADDED = "added";
-    private static final List<String> FORMAT_LIST = List.of("stylish");
+    private static final List<String> OUTPUT_FORMAT_LIST = List.of("stylish");
 
-    public static String generate(String filePath1, String filePath2, String format) throws Exception {
-        checkParametres(filePath1, filePath2, format);
+    public static String generate(String filePath1, String filePath2, String outputFormat) throws Exception {
+        checkParametres(filePath1, filePath2, outputFormat);
 
-        StringBuilder result = new StringBuilder();
+        String outputFormatUsed = outputFormat.toLowerCase();
+        String fileFormat = "unknown";
+        String fileFormat1 = Utils.getFormatName(Utils.getFileExtension(filePath1));
+        String fileFormat2 = Utils.getFormatName(Utils.getFileExtension(filePath2));
 
-        String formatUsed = format.toLowerCase();
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
-        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
-
-        mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-        mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-        mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-
-        mapper.disable(JsonWriteFeature.QUOTE_FIELD_NAMES.mappedFeature());
-
-        Map<String, Object> jsonMap1 = getFileData(filePath1, mapper);
-        Map<String, Object> jsonMap2 = getFileData(filePath2, mapper);
-
-        Map<String, String> differences = genDiff(jsonMap1, jsonMap2);
-
-        if (differences.size() > 0) {
-            result.append("{\n");
-            differences.entrySet().stream()
-                    .forEach(mapEntry -> {
-                        switch (mapEntry.getValue()) {
-                            case (ITEM_UNCHANGED):
-                                result.append(String.format("    %s: %s\n", mapEntry.getKey(),
-                                        jsonMap1.get(mapEntry.getKey())));
-                                break;
-                            case (ITEM_CHANGED):
-                                result.append(String.format("  - %s: %s\n", mapEntry.getKey(),
-                                        jsonMap1.get(mapEntry.getKey())));
-                                result.append(String.format("  + %s: %s\n", mapEntry.getKey(),
-                                        jsonMap2.get(mapEntry.getKey())));
-                                break;
-                            case (ITEM_DELETED):
-                                result.append(String.format("  - %s: %s\n", mapEntry.getKey(),
-                                        jsonMap1.get(mapEntry.getKey())));
-                                break;
-                            case (ITEM_ADDED):
-                                result.append(String.format("  + %s: %s\n", mapEntry.getKey(),
-                                        jsonMap1.get(mapEntry.getKey())));
-                                break;
-                            default:
-                        }
-                    });
-            result.append("}");
+        if (Objects.equals(fileFormat1, fileFormat2)) {
+            fileFormat = fileFormat1;
         } else {
-            result.append("{}");
+            throw new Exception(String.format("Formats of the files are different: '%s' and '%s'",
+                    fileFormat1, fileFormat2));
         }
 
-//        for (Map.Entry<String, String> mapEntry : differences.entrySet()) {
-//            System.out.println(mapEntry.getKey() + "--->" + mapEntry.getValue());
-//        }
+        ObjectMapper mapper = getMapper(fileFormat);
 
-//        System.out.println(format);
-//        mapper.writeValue(System.out, differences);
-//
-//        System.out.println(mapper
-//                .writer()
-//                .withDefaultPrettyPrinter()
-//                .writeValueAsString(differences));
-        System.out.println(result.toString());
-        return result.toString();
+        String result = Parser.getDifference(
+                getFileData(filePath1, mapper),
+                getFileData(filePath2, mapper)
+        );
+
+        System.out.println(result);
+        return result;
     }
 
-    private static void checkParametres(String filePath1, String filePath2, String format) throws Exception {
+    private static void checkParametres(String filePath1, String filePath2, String outputFormat) throws Exception {
         if (filePath1.isEmpty()) {
             throw new NullPointerException("The paramenter 'filePath1' must not be empty!");
         }
@@ -106,14 +50,24 @@ public final class Differ {
             throw new NullPointerException("The paramenter 'filePath2' must not be empty!");
         }
 
-        if (format.isEmpty()) {
+        if (outputFormat.isEmpty()) {
             throw new NullPointerException("The FORMAT must not be not empty!");
         }
 
-        if (!FORMAT_LIST.contains(format.toLowerCase())) {
-            throw new Exception(String.format("There is no such format '%s'", format));
+        if (!OUTPUT_FORMAT_LIST.contains(outputFormat.toLowerCase())) {
+            throw new Exception(String.format("There is no such format '%s'", outputFormat));
         }
     }
+
+    private static ObjectMapper getMapper(String fileFormat) {
+        switch (fileFormat) {
+            case "yaml":
+                return new ObjectMapper(new YAMLFactory());
+            default:
+                return new ObjectMapper();
+        }
+    }
+
     private static Map<String, Object> getFileData(String fileName, ObjectMapper mapper) throws Exception {
         File file = new File(fileName);
 
@@ -125,43 +79,15 @@ public final class Differ {
             throw new IOException(String.format("Unable to read the file '%s'", fileName));
         }
 
-        try {
-            mapper.readTree(file);
-        } catch (IOException err) {
-            throw new IOException(String.format("Incorrect JSON format of the file '%s'", fileName));
+        if (!mapper.getFactory().getClass().equals(YAMLFactory.class)) {
+            try {
+                mapper.readTree(file);
+            } catch (IOException err) {
+                throw new IOException(String.format("Incorrect JSON format of the file '%s'", fileName));
+            }
         }
 
         return mapper.readValue(file, new TypeReference<Map<String, Object>>() { });
-    }
-
-    private static Map<String, String> genDiff(Map<String, Object> jsonMap1, Map<String, Object> jsonMap2) {
-        Map<String, String> result = new HashMap<>();
-
-        Set<String> set = new HashSet<>();
-        set.addAll(jsonMap1.keySet());
-        set.addAll(jsonMap2.keySet());
-
-        set.stream()
-                .sorted()
-                .forEach(keyLine -> {
-                    boolean keyInV1 = jsonMap1.containsKey(keyLine);
-                    boolean keyInV2 = jsonMap2.containsKey(keyLine);
-                    String value = ITEM_UNCHANGED;
-
-                    if (keyInV1 && keyInV2) {
-                        if (!Objects.equals(jsonMap2.get(keyLine), jsonMap1.get(keyLine))) {
-                            value = ITEM_CHANGED;
-                        }
-                    } else if (keyInV1 && !keyInV2) {
-                        value = ITEM_DELETED;
-                    } else if (!keyInV1 && keyInV2) {
-                        value = ITEM_ADDED;
-                    }
-
-                    result.put(keyLine, value);
-                });
-
-        return result;
     }
 
 }
