@@ -17,73 +17,20 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class Differ {
+public final class Differ {
     private static final String ITEM_UNCHANGED = "unchanged";
     private static final String ITEM_CHANGED = "changed";
     private static final String ITEM_DELETED = "deleted";
     private static final String ITEM_ADDED = "added";
     private static final List<String> FORMAT_LIST = List.of("stylish");
-    private static Map<String, Object> getFileData(String fileName, ObjectMapper mapper) throws Exception {
-        File file = new File(fileName);
-
-        if (!file.isFile()) {
-            throw new IOException(String.format("There is no file with name '%s'", fileName));
-        }
-
-        if (!file.canRead()) {
-            throw new IOException(String.format("Unable to read the file '%s'", fileName));
-        }
-
-        try {
-            mapper.readTree(file);
-        } catch (IOException err) {
-            throw new IOException(String.format("Incorrect JSON format of the file '%s'", fileName));
-        }
-
-        return mapper.readValue(file, new TypeReference<Map<String, Object>>() { });
-    }
-
-    private static Map<String, String> genDiff(Map<String, Object> jsonMap1, Map<String, Object> jsonMap2) {
-        Map<String, String> result = new HashMap<>();
-
-        Set<String> set = new HashSet<>();
-        set.addAll(jsonMap1.keySet());
-        set.addAll(jsonMap2.keySet());
-
-        set.stream()
-                .sorted()
-                .forEach(keyLine -> {
-                    boolean keyInV1 = jsonMap1.containsKey(keyLine);
-                    boolean keyInV2 = jsonMap2.containsKey(keyLine);
-                    String value = ITEM_UNCHANGED;
-
-                    if (keyInV1 && keyInV2) {
-                        if (!Objects.equals(jsonMap2.get(keyLine), jsonMap1.get(keyLine))) {
-                            value = ITEM_CHANGED;
-                        }
-                    } else if (keyInV1 && !keyInV2) {
-                        value = ITEM_DELETED;
-                    } else if (!keyInV1 && keyInV2) {
-                        value = ITEM_ADDED;
-                    }
-
-                    result.put(keyLine, value);
-                });
-
-        return result;
-    }
 
     public static String generate(String filePath1, String filePath2, String format) throws Exception {
-        if (filePath1.isEmpty() || filePath1 == null || filePath2.isEmpty() || filePath2 == null) {
-            throw new NullPointerException("The paramentres 'filePath1' and 'filePath2' must be not empty!");
-        }
+        checkParametres(filePath1, filePath2, format);
 
         StringBuilder result = new StringBuilder();
 
         String formatUsed = format.toLowerCase();
-        if (!FORMAT_LIST.contains(formatUsed)) {
-            throw new Exception(String.format("There is no such format '%s'", format));
-        }
+
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         mapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
@@ -148,6 +95,73 @@ public class Differ {
 //                .writeValueAsString(differences));
         System.out.println(result.toString());
         return result.toString();
+    }
+
+    private static void checkParametres(String filePath1, String filePath2, String format) throws Exception {
+        if (filePath1.isEmpty()) {
+            throw new NullPointerException("The paramenter 'filePath1' must not be empty!");
+        }
+
+        if (filePath2.isEmpty()) {
+            throw new NullPointerException("The paramenter 'filePath2' must not be empty!");
+        }
+
+        if (format.isEmpty()) {
+            throw new NullPointerException("The FORMAT must not be not empty!");
+        }
+
+        if (!FORMAT_LIST.contains(format.toLowerCase())) {
+            throw new Exception(String.format("There is no such format '%s'", format));
+        }
+    }
+    private static Map<String, Object> getFileData(String fileName, ObjectMapper mapper) throws Exception {
+        File file = new File(fileName);
+
+        if (!file.isFile()) {
+            throw new IOException(String.format("There is no file with name '%s'", fileName));
+        }
+
+        if (!file.canRead()) {
+            throw new IOException(String.format("Unable to read the file '%s'", fileName));
+        }
+
+        try {
+            mapper.readTree(file);
+        } catch (IOException err) {
+            throw new IOException(String.format("Incorrect JSON format of the file '%s'", fileName));
+        }
+
+        return mapper.readValue(file, new TypeReference<Map<String, Object>>() { });
+    }
+
+    private static Map<String, String> genDiff(Map<String, Object> jsonMap1, Map<String, Object> jsonMap2) {
+        Map<String, String> result = new HashMap<>();
+
+        Set<String> set = new HashSet<>();
+        set.addAll(jsonMap1.keySet());
+        set.addAll(jsonMap2.keySet());
+
+        set.stream()
+                .sorted()
+                .forEach(keyLine -> {
+                    boolean keyInV1 = jsonMap1.containsKey(keyLine);
+                    boolean keyInV2 = jsonMap2.containsKey(keyLine);
+                    String value = ITEM_UNCHANGED;
+
+                    if (keyInV1 && keyInV2) {
+                        if (!Objects.equals(jsonMap2.get(keyLine), jsonMap1.get(keyLine))) {
+                            value = ITEM_CHANGED;
+                        }
+                    } else if (keyInV1 && !keyInV2) {
+                        value = ITEM_DELETED;
+                    } else if (!keyInV1 && keyInV2) {
+                        value = ITEM_ADDED;
+                    }
+
+                    result.put(keyLine, value);
+                });
+
+        return result;
     }
 
 }

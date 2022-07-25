@@ -16,6 +16,7 @@ public final class TestApp {
     private Path resourceDirectory = Paths.get("src", "test", "resources");
     private String filePath1;
     private String filePath2;
+    private String emptyJsonFile;
     private String outputFormat;
     private String incorrectJsonFilePath;
 
@@ -24,6 +25,7 @@ public final class TestApp {
         filePath1 = resourceDirectory.toFile().getAbsolutePath() + "/file1.json";
         filePath2 = resourceDirectory.toFile().getAbsolutePath() + "/file2.json";
         incorrectJsonFilePath = resourceDirectory.toFile().getAbsolutePath() + "/incorrectFile1.json";
+        emptyJsonFile = resourceDirectory.toFile().getAbsolutePath() + "/empty.json";
         outputFormat = "stylish";
     }
 
@@ -54,6 +56,28 @@ public final class TestApp {
             String diff2 = Differ.generate(filePath2, filePath1, outputFormat);
             assertThat(diff2).isEqualTo(correctAnswer2);
 
+            String correctAnswer3 = "{}";
+            String diff3 = Differ.generate(emptyJsonFile, emptyJsonFile, outputFormat);
+            assertThat(diff3).isEqualTo(correctAnswer3);
+
+            String correctAnswer4 = "{\n"
+                    + "  + host: null\n"
+                    + "  + timeout: null\n"
+                    + "  + verbose: null\n"
+                    + "}";
+
+            String diff4 = Differ.generate(emptyJsonFile, filePath2, outputFormat);
+            assertThat(diff4).isEqualTo(correctAnswer4);
+
+            String correctAnswer5 = "{\n"
+                    + "  - host: hexlet.io\n"
+                    + "  - timeout: 20\n"
+                    + "  - verbose: true\n"
+                    + "}";
+
+            String diff5 = Differ.generate(filePath2, emptyJsonFile, outputFormat);
+            assertThat(diff5).isEqualTo(correctAnswer5);
+
         } catch (Exception err) {
             System.out.println("ERROR has appeared in 'generate' method: " + err.getMessage());
         }
@@ -77,7 +101,23 @@ public final class TestApp {
                 Differ.generate(null, filePath2, outputFormat)).isInstanceOf(NullPointerException.class);
 
         assertThatThrownBy(() ->
+                Differ.generate(filePath1, null, outputFormat)).isInstanceOf(NullPointerException.class);
+
+        assertThatThrownBy(() ->
+                Differ.generate("", filePath2, outputFormat)).isInstanceOf(NullPointerException.class);
+
+        assertThatThrownBy(() ->
+                Differ.generate(filePath1, "", outputFormat)).isInstanceOf(NullPointerException.class);
+
+        assertThatThrownBy(() ->
                 Differ.generate(filePath2, filePath2, "incorrectFormat")).isInstanceOf(Exception.class);
+
+        assertThatThrownBy(() ->
+                Differ.generate(filePath2, filePath2, "")).isInstanceOf(Exception.class);
+
+        assertThatThrownBy(() ->
+                Differ.generate(filePath2, filePath2, null)).isInstanceOf(Exception.class);
+
     }
 
 }
