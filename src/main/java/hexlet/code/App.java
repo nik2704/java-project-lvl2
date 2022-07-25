@@ -10,16 +10,16 @@ import java.util.concurrent.Callable;
 
 
 @Command(name = "gendiff",
-        description="Compares two configuration files and shows a difference.",
-        headerHeading="%n")
-public class App implements Callable<Integer> {
-    private final String OUTPUT_FORMAT = "stylish";
+        description = "Compares two configuration files and shows a difference.",
+        headerHeading = "%n")
+public final class App implements Callable<Integer> {
+    private static final String OUTPUT_FORMAT = "stylish";
 
     @Option(names = { "-f", "--format" },
             paramLabel = "format",
             defaultValue = OUTPUT_FORMAT,
             description = "output format [default: ${DEFAULT-VALUE}]")
-    String format;
+    private String format;
 
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "Show this help message and exit.")
     private boolean usageHelpRequested;
@@ -27,12 +27,12 @@ public class App implements Callable<Integer> {
     @Option(names = {"-V", "--version"}, versionHelp = true, description = "Print version information and exit.")
     private boolean versionInfoRequested;
 
-    @Parameters(paramLabel="filepath1", index = "0", description = "path to first file")
+    @Parameters(paramLabel = "filepath1", index = "0", description = "path to first file")
     private String filePath1;
 
-    @Parameters(paramLabel="filepath2", index = "1", description = "path to second file")
+    @Parameters(paramLabel = "filepath2", index = "1", description = "path to second file")
     private String filePath2;
-    public static void main (String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         int exitCode = 0;
         CommandLine commandLine = new CommandLine(new App());
         commandLine.parseArgs(args);

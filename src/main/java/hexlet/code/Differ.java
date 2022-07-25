@@ -1,6 +1,5 @@
 package hexlet.code;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -10,7 +9,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 
 
 public class Differ {
@@ -18,7 +22,7 @@ public class Differ {
     private static final String ITEM_CHANGED = "changed";
     private static final String ITEM_DELETED = "deleted";
     private static final String ITEM_ADDED = "added";
-    private static final List<String> formatList = List.of("stylish");
+    private static final List<String> FORMAT_LIST = List.of("stylish");
     private static Map<String, Object> getFileData(String fileName, ObjectMapper mapper) throws Exception {
         File file = new File(fileName);
 
@@ -32,7 +36,7 @@ public class Differ {
 
         try {
             mapper.readTree(file);
-        } catch(IOException err) {
+        } catch (IOException err) {
             throw new IOException(String.format("Incorrect JSON format of the file '%s'", fileName));
         }
 
@@ -40,7 +44,7 @@ public class Differ {
     }
 
     private static Map<String, String> genDiff(Map<String, Object> jsonMap1, Map<String, Object> jsonMap2) {
-        Map<String, String> result = new LinkedHashMap<>();
+        Map<String, String> result = new HashMap<>();
 
         Set<String> set = new HashSet<>();
         set.addAll(jsonMap1.keySet());
@@ -71,7 +75,7 @@ public class Differ {
 
     public static String generate(String filePath1, String filePath2, String format) throws Exception {
         String formatUsed = format.toLowerCase();
-        if (!formatList.contains(formatUsed)) {
+        if (!FORMAT_LIST.contains(formatUsed)) {
             throw new Exception(String.format("There is no such format '%s'", format));
         }
         ObjectMapper mapper = new ObjectMapper();
