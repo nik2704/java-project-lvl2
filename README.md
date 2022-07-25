@@ -8,3 +8,5 @@
 ![Java CI](https://github.com/nik2704/java-project-lvl2/actions/workflows/blank.yml/badge.svg)
 
 [![asciicast](https://asciinema.org/a/SHXhUiKmPI2P7v4EpBuJcQFnV.svg)](https://asciinema.org/a/SHXhUiKmPI2P7v4EpBuJcQFnV)
+
+[![asciicast](https://asciinema.org/a/nMSCoG0WCcUvFNPE2Y7jQT2fh.svg)](https://asciinema.org/a/nMSCoG0WCcUvFNPE2Y7jQT2fh)
