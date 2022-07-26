@@ -13,11 +13,11 @@ import java.util.concurrent.Callable;
         description = "Compares two configuration files and shows a difference.",
         headerHeading = "%n")
 public final class App implements Callable<Integer> {
-    private static final String OUTPUT_FORMAT = "stylish";
+    private static final String DEFAULT_OUTPUT_FORMAT = "stylish";
 
     @Option(names = { "-f", "--format" },
             paramLabel = "format",
-            defaultValue = OUTPUT_FORMAT,
+            defaultValue = DEFAULT_OUTPUT_FORMAT,
             description = "output format [default: ${DEFAULT-VALUE}]")
     private String outputFormat;
 

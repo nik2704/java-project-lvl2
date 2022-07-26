@@ -16,6 +16,10 @@ public final class TestApp {
     private Path resourceDirectory = Paths.get("src", "test", "resources");
     private String filePath1;
     private String filePath2;
+    private String fileNestedPath1;
+    private String fileNestedPath2;
+    private String yamlFileNestedPath1;
+    private String yamlFileNestedPath2;
     private String emptyJsonFile;
     private String yamlFilePath1;
     private String yamlFilePath2;
@@ -31,8 +35,13 @@ public final class TestApp {
         incorrectJsonFilePath = resourceDirectory.toFile().getAbsolutePath() + "/incorrectFile1.json";
         emptyJsonFile = resourceDirectory.toFile().getAbsolutePath() + "/empty.json";
 
+        fileNestedPath1 = resourceDirectory.toFile().getAbsolutePath() + "/file1nested.json";
+        fileNestedPath2 = resourceDirectory.toFile().getAbsolutePath() + "/file2nested.json";
+        yamlFileNestedPath1 = resourceDirectory.toFile().getAbsolutePath() + "/file1nested.yaml";
+        yamlFileNestedPath2 = resourceDirectory.toFile().getAbsolutePath() + "/file2nested.yaml";
+
         yamlFilePath1 = resourceDirectory.toFile().getAbsolutePath() + "/file1.yaml";
-        yamlFilePath2 = resourceDirectory.toFile().getAbsolutePath() + "/file2.yml";
+        yamlFilePath2 = resourceDirectory.toFile().getAbsolutePath() + "/file2.yaml";
         yamlIncorrectFilePath = resourceDirectory.toFile().getAbsolutePath() + "/incorrectFile1.yaml";
         emptyYamlFile = resourceDirectory.toFile().getAbsolutePath() + "/empty.yml";
 
@@ -102,6 +111,38 @@ public final class TestApp {
 
             String diff5yml = Differ.generate(yamlFilePath2, emptyYamlFile, outputFormat);
             assertThat(diff5yml).isEqualTo(correctAnswer5);
+
+            String correctAnswer6 = "{\n"
+                    + "    chars1: [a, b, c]\n"
+                    + "  - chars2: [d, e, f]\n"
+                    + "  + chars2: false\n"
+                    + "  - checked: false\n"
+                    + "  + checked: true\n"
+                    + "  - default: null\n"
+                    + "  + default: [value1, value2]\n"
+                    + "  - id: 45\n"
+                    + "  + id: null\n"
+                    + "  - key1: value1\n"
+                    + "  + key2: value2\n"
+                    + "    numbers1: [1, 2, 3, 4]\n"
+                    + "  - numbers2: [2, 3, 4, 5]\n"
+                    + "  + numbers2: [22, 33, 44, 55]\n"
+                    + "  - numbers3: [3, 4, 5]\n"
+                    + "  + numbers4: [4, 5, 6]\n"
+                    + "  + obj1: {nestedKey=value, isNested=true}\n"
+                    + "  - setting1: Some value\n"
+                    + "  + setting1: Another value\n"
+                    + "  - setting2: 200\n"
+                    + "  + setting2: 300\n"
+                    + "  - setting3: true\n"
+                    + "  + setting3: none\n"
+                    + "}";
+
+            String diff6json = Differ.generate(fileNestedPath1, fileNestedPath2, outputFormat);
+            assertThat(diff6json).isEqualTo(correctAnswer6);
+
+            String diff6yml = Differ.generate(yamlFileNestedPath1, yamlFileNestedPath2, outputFormat);
+            assertThat(diff6yml).isEqualTo(correctAnswer6);
 
         } catch (Exception err) {
             System.out.println("ERROR has appeared in 'generate' method: " + err.getMessage());

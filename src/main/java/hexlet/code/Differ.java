@@ -1,40 +1,31 @@
 package hexlet.code;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import hexlet.code.utils.Utils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.HashSet;
 
 
 public final class Differ {
+    private static final String ITEM_UNCHANGED = "unchanged";
+    private static final String ITEM_CHANGED = "changed";
+    private static final String ITEM_DELETED = "deleted";
+    private static final String ITEM_ADDED = "added";
     private static final List<String> OUTPUT_FORMAT_LIST = List.of("stylish");
 
     public static String generate(String filePath1, String filePath2, String outputFormat) throws Exception {
         checkParametres(filePath1, filePath2, outputFormat);
 
-        String outputFormatUsed = outputFormat.toLowerCase();
-        String fileFormat = "unknown";
-        String fileFormat1 = Utils.getFormatName(Utils.getFileExtension(filePath1));
-        String fileFormat2 = Utils.getFormatName(Utils.getFileExtension(filePath2));
+        outputFormat = outputFormat.toLowerCase();
 
-        if (Objects.equals(fileFormat1, fileFormat2)) {
-            fileFormat = fileFormat1;
-        } else {
-            throw new Exception(String.format("Formats of the files are different: '%s' and '%s'",
-                    fileFormat1, fileFormat2));
-        }
+        Map<String, Map<String, String>> fileData = Parser.parseFileData(filePath1, filePath2);
 
-        ObjectMapper mapper = getMapper(fileFormat);
-
-        String result = Parser.getDifference(
-                getFileData(filePath1, mapper),
-                getFileData(filePath2, mapper)
+        String result = getDifference(
+                fileData.get(filePath1),
+                fileData.get(filePath2),
+                outputFormat
         );
 
         System.out.println(result);
@@ -59,35 +50,100 @@ public final class Differ {
         }
     }
 
-    private static ObjectMapper getMapper(String fileFormat) {
-        switch (fileFormat) {
-            case "yaml":
-                return new ObjectMapper(new YAMLFactory());
-            default:
-                return new ObjectMapper();
+    public static String getDifference(Map<String, String> map1, Map<String, String> map2, String outputFormat) {
+        StringBuilder result = new StringBuilder();
+        Map<String, String> differences = getKeysStatus(map1, map2);
+
+        if (differences.size() > 0) {
+            result.append("{\n");
+            differences.entrySet().stream()
+                    .sorted(Map.Entry.comparingByKey())
+                    .forEach(mapEntry -> {
+                        String v1 = map1.get(mapEntry.getKey());
+                        String v2 = map2.get(mapEntry.getKey());
+
+                        switch (mapEntry.getValue()) {
+                            case (ITEM_UNCHANGED):
+                                result.append(getFormattedString(mapEntry.getKey(), v1, ITEM_UNCHANGED, outputFormat));
+                                break;
+                            case (ITEM_CHANGED):
+                                result.append(getFormattedString(mapEntry.getKey(), v1, ITEM_DELETED, outputFormat));
+                                result.append(getFormattedString(mapEntry.getKey(), v2, ITEM_ADDED, outputFormat));
+                                break;
+                            case (ITEM_DELETED):
+                                result.append(getFormattedString(mapEntry.getKey(), v1, ITEM_DELETED, outputFormat));
+                                break;
+                            case (ITEM_ADDED):
+                                result.append(getFormattedString(mapEntry.getKey(), v2, ITEM_ADDED, outputFormat));
+                                break;
+                            default:
+                        }
+                    });
+            result.append("}");
+        } else {
+            result.append("{}");
         }
+
+        return result.toString();
     }
 
-    private static Map<String, Object> getFileData(String fileName, ObjectMapper mapper) throws Exception {
-        File file = new File(fileName);
-
-        if (!file.isFile()) {
-            throw new IOException(String.format("There is no file with name '%s'", fileName));
+    private static String getFormattedString(String key, String value, String event, String outputFormat) {
+        switch (outputFormat) {
+            default:
+                return stylish(key, value, event);
+        }
+    }
+    private static String stylish(String key, String value, String event) {
+        char mark = ' ';
+        switch (event) {
+            case (ITEM_ADDED):
+                mark = '+';
+                break;
+            case (ITEM_DELETED):
+                mark = '-';
+                break;
+            default:
         }
 
-        if (!file.canRead()) {
-            throw new IOException(String.format("Unable to read the file '%s'", fileName));
-        }
+        value = value
+            .replace("[\"", "[")
+            .replace("\"]", "]")
+            .replace("{\"", "{")
+            .replace("\"}", "}")
+            .replaceAll("\"", "")
+            .replaceAll(",", ", ")
+            .replaceAll(":", "=");
 
-        if (!mapper.getFactory().getClass().equals(YAMLFactory.class)) {
-            try {
-                mapper.readTree(file);
-            } catch (IOException err) {
-                throw new IOException(String.format("Incorrect JSON format of the file '%s'", fileName));
-            }
-        }
+        return String.format("  %c %s: %s\n", mark, key, value);
+    }
 
-        return mapper.readValue(file, new TypeReference<Map<String, Object>>() { });
+    private static Map<String, String> getKeysStatus(Map<String, String> map1, Map<String, String> map2) {
+        Map<String, String> differences = new HashMap<>();
+
+        Set<String> set = new HashSet<>();
+        set.addAll(map1.keySet());
+        set.addAll(map2.keySet());
+
+        set.stream()
+                .sorted()
+                .forEach(keyLine -> {
+                    boolean keyInV1 = map1.containsKey(keyLine);
+                    boolean keyInV2 = map2.containsKey(keyLine);
+                    String value = ITEM_UNCHANGED;
+                    if (keyInV1 && keyInV2) {
+                        if (!Objects.equals(map2.get(keyLine), map1.get(keyLine))) {
+                            value = ITEM_CHANGED;
+                        }
+                    } else if (keyInV1 && !keyInV2) {
+                        value = ITEM_DELETED;
+                    } else if (!keyInV1 && keyInV2) {
+                        value = ITEM_ADDED;
+                    }
+
+                    differences.put(keyLine, value);
+                });
+
+        return differences;
     }
 
 }

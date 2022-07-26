@@ -1,86 +1,84 @@
 package hexlet.code;
 
-//import java.util.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import hexlet.code.utils.Utils;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 import java.util.Objects;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class Parser {
-    private static final String ITEM_UNCHANGED = "unchanged";
-    private static final String ITEM_CHANGED = "changed";
-    private static final String ITEM_DELETED = "deleted";
-    private static final String ITEM_ADDED = "added";
 
-    public static String getDifference(Map<String, Object> map1, Map<String, Object> map2) {
-        StringBuilder result = new StringBuilder();
-        Map<String, String> differences = getKeysStatus(map1, map2);
+    public static Map<String, Map<String, String>> parseFileData(String filePath1, String filePath2) throws Exception {
 
-        if (differences.size() > 0) {
-            result.append("{\n");
-            differences.entrySet().stream()
-                    .sorted(Map.Entry.comparingByKey())
-                    .forEach(mapEntry -> {
-                        System.out.println(mapEntry.getKey());
-                        switch (mapEntry.getValue()) {
-                            case (ITEM_UNCHANGED):
-                                result.append(String.format("    %s: %s\n", mapEntry.getKey(),
-                                        map1.get(mapEntry.getKey())));
-                                break;
-                            case (ITEM_CHANGED):
-                                result.append(String.format("  - %s: %s\n", mapEntry.getKey(),
-                                        map1.get(mapEntry.getKey())));
-                                result.append(String.format("  + %s: %s\n", mapEntry.getKey(),
-                                        map2.get(mapEntry.getKey())));
-                                break;
-                            case (ITEM_DELETED):
-                                result.append(String.format("  - %s: %s\n", mapEntry.getKey(),
-                                        map1.get(mapEntry.getKey())));
-                                break;
-                            case (ITEM_ADDED):
-                                result.append(String.format("  + %s: %s\n", mapEntry.getKey(),
-                                        map2.get(mapEntry.getKey())));
-                                break;
-                            default:
-                        }
-                    });
-            result.append("}");
+        checkFile(filePath1);
+        checkFile(filePath2);
+
+        String fileFormat = "unknown";
+        String fileFormat1 = Utils.getFormatName(Utils.getFileExtension(filePath1));
+        String fileFormat2 = Utils.getFormatName(Utils.getFileExtension(filePath2));
+
+        if (Objects.equals(fileFormat1, fileFormat2)) {
+            fileFormat = fileFormat1;
         } else {
-            result.append("{}");
+            throw new Exception(String.format("Formats of the files are different: '%s' and '%s'",
+                    fileFormat1, fileFormat2));
         }
 
-        return result.toString();
+        Map<String, Map<String, String>> result = new HashMap<>();
+        ObjectMapper mapper = new ObjectMapper();
+
+        if (fileFormat.equals("yaml")) {
+            mapper = new ObjectMapper(new YAMLFactory());
+        }
+
+        result.put(filePath1, getFileData(filePath1, mapper));
+        result.put(filePath2, getFileData(filePath2, mapper));
+
+        return result;
     }
 
-    private static Map<String, String> getKeysStatus(Map<String, Object> map1, Map<String, Object> map2) {
-        Map<String, String> differences = new HashMap<>();
+    private static void checkFile(String fileName) throws IOException {
+        File file = new File(fileName);
 
-        Set<String> set = new HashSet<>();
-        set.addAll(map1.keySet());
-        set.addAll(map2.keySet());
+        if (!file.isFile()) {
+            throw new IOException(String.format("There is no file with name '%s'", fileName));
+        }
 
-        set.stream()
-                .sorted()
-                .forEach(keyLine -> {
-                    boolean keyInV1 = map1.containsKey(keyLine);
-                    boolean keyInV2 = map2.containsKey(keyLine);
-                    String value = ITEM_UNCHANGED;
+        if (!file.canRead()) {
+            throw new IOException(String.format("Unable to read the file '%s'", fileName));
+        }
+    }
 
-                    if (keyInV1 && keyInV2) {
-                        if (!Objects.equals(map2.get(keyLine), map1.get(keyLine))) {
-                            value = ITEM_CHANGED;
-                        }
-                    } else if (keyInV1 && !keyInV2) {
-                        value = ITEM_DELETED;
-                    } else if (!keyInV1 && keyInV2) {
-                        value = ITEM_ADDED;
-                    }
+    private static Map<String, String> getFileData(String fileName, ObjectMapper mapper) throws Exception {
+        File file = new File(fileName);
+        Map<String, String> result = new HashMap<>();
 
-                    differences.put(keyLine, value);
-                });
+        try {
+            mapper.readTree(file);
+            JsonNode rootNode = mapper.readTree(file);
 
-        return differences;
+            Iterator<Map.Entry<String, JsonNode>> fieldsIterator = rootNode.fields();
+            while (fieldsIterator.hasNext()) {
+                Map.Entry<String, JsonNode> field = fieldsIterator.next();
+                JsonNodeType nodeType = field.getValue().getNodeType();
+                if (nodeType.equals(JsonNodeType.STRING)) {
+                    result.put(field.getKey(), field.getValue().asText());
+                } else {
+                    result.put(field.getKey(), field.getValue().toString());
+                }
+            }
+        } catch (IOException err) {
+            throw new IOException(String.format("Incorrect format of the file '%s'", fileName));
+        }
+
+        return result;
     }
 }
