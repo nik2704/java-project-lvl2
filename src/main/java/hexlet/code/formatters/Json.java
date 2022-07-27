@@ -72,8 +72,8 @@ public class Json {
 //        Map<String, String> sortMap = new TreeMap<String, String>(new MapKeyComparator());
         LinkedHashMap<String, String> result = new LinkedHashMap<>();
         result.put("status", status);
+        result.put("value", getValueFormatted(v2));
         result.put("oldValue", getValueFormatted(v1));
-        result.put("newValue", getValueFormatted(v2));
 
         return result;
 //        return Map.of(
