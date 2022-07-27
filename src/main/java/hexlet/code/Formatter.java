@@ -1,5 +1,6 @@
 package hexlet.code;
 
+import hexlet.code.formatters.Json;
 import hexlet.code.formatters.Plain;
 import hexlet.code.formatters.Stylish;
 
@@ -10,6 +11,8 @@ public class Formatter {
                                           Map<String, String> differences,
                                           String outputFormat) {
         switch (outputFormat) {
+            case ("json"):
+                return Json.getResult(fileData, differences);
             case ("plain"):
                 return Plain.getResult(fileData, differences);
             default:

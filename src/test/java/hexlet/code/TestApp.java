@@ -49,6 +49,91 @@ public final class TestApp {
     }
 
     @Test
+    public void testJsonFormat() {
+        try {
+            String corresctAnswer1 = "{\n"
+                    + "  \"key1\" : {\n"
+                    + "    \"status\" : \"deleted\",\n"
+                    + "    \"value\" : \"value1\"\n"
+                    + "  },\n"
+                    + "  \"setting2\" : {\n"
+                    + "    \"status\" : \"changed\",\n"
+                    + "    \"oldValue\" : \"200\",\n"
+                    + "    \"newValue\" : \"300\"\n"
+                    + "  },\n"
+                    + "  \"key2\" : {\n"
+                    + "    \"status\" : \"added\",\n"
+                    + "    \"value\" : \"value2\"\n"
+                    + "  },\n"
+                    + "  \"setting3\" : {\n"
+                    + "    \"status\" : \"changed\",\n"
+                    + "    \"oldValue\" : \"true\",\n"
+                    + "    \"newValue\" : \"none\"\n"
+                    + "  },\n"
+                    + "  \"chars2\" : {\n"
+                    + "    \"status\" : \"changed\",\n"
+                    + "    \"oldValue\" : \"[d, e, f]\",\n"
+                    + "    \"newValue\" : \"false\"\n"
+                    + "  },\n"
+                    + "  \"chars1\" : {\n"
+                    + "    \"status\" : \"unchanged\",\n"
+                    + "    \"value\" : \"[a, b, c]\"\n"
+                    + "  },\n"
+                    + "  \"setting1\" : {\n"
+                    + "    \"status\" : \"changed\",\n"
+                    + "    \"oldValue\" : \"Some value\",\n"
+                    + "    \"newValue\" : \"Another value\"\n"
+                    + "  },\n"
+                    + "  \"numbers4\" : {\n"
+                    + "    \"status\" : \"added\",\n"
+                    + "    \"value\" : \"[4, 5, 6]\"\n"
+                    + "  },\n"
+                    + "  \"numbers3\" : {\n"
+                    + "    \"status\" : \"deleted\",\n"
+                    + "    \"value\" : \"[3, 4, 5]\"\n"
+                    + "  },\n"
+                    + "  \"numbers2\" : {\n"
+                    + "    \"status\" : \"changed\",\n"
+                    + "    \"oldValue\" : \"[2, 3, 4, 5]\",\n"
+                    + "    \"newValue\" : \"[22, 33, 44, 55]\"\n"
+                    + "  },\n"
+                    + "  \"numbers1\" : {\n"
+                    + "    \"status\" : \"unchanged\",\n"
+                    + "    \"value\" : \"[1, 2, 3, 4]\"\n"
+                    + "  },\n"
+                    + "  \"obj1\" : {\n"
+                    + "    \"status\" : \"added\",\n"
+                    + "    \"value\" : \"{nestedKey=value, isNested=true}\"\n"
+                    + "  },\n"
+                    + "  \"default\" : {\n"
+                    + "    \"status\" : \"changed\",\n"
+                    + "    \"oldValue\" : \"null\",\n"
+                    + "    \"newValue\" : \"[value1, value2]\"\n"
+                    + "  },\n"
+                    + "  \"checked\" : {\n"
+                    + "    \"status\" : \"changed\",\n"
+                    + "    \"oldValue\" : \"false\",\n"
+                    + "    \"newValue\" : \"true\"\n"
+                    + "  },\n"
+                    + "  \"id\" : {\n"
+                    + "    \"status\" : \"changed\",\n"
+                    + "    \"oldValue\" : \"45\",\n"
+                    + "    \"newValue\" : \"null\"\n"
+                    + "  }\n"
+                    + "}";
+
+            String diff1json = Differ.generate(fileNestedPath1, fileNestedPath2, "json");
+            assertThat(diff1json).isEqualTo(corresctAnswer1);
+
+            String diff1yml = Differ.generate(yamlFileNestedPath1, yamlFileNestedPath2, "json");
+            assertThat(diff1yml).isEqualTo(corresctAnswer1);
+        } catch (Exception err) {
+            System.out.println("ERROR has appeared in 'generate' method while testing PLAIN format: "
+                    + err.getMessage());
+        }
+    }
+
+    @Test
     public void testPlainFormat() {
         try {
             String corresctAnswer1 = "Property 'chars2' was updated. From [complex value] to false\n"

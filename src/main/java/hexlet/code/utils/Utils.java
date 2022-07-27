@@ -10,7 +10,7 @@ public class Utils {
     public static final String ITEM_CHANGED = "changed";
     public static final String ITEM_DELETED = "deleted";
     public static final String ITEM_ADDED = "added";
-    public static final List<String> OUTPUT_FORMAT_LIST = List.of("stylish", "plain");
+    public static final List<String> OUTPUT_FORMAT_LIST = List.of("stylish", "plain", "json");
     private static final Map<String, String> FORMAT_NAMES  = Map.of(
             "json", "json",
             "yaml", "yaml",
