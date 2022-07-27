@@ -14,6 +14,9 @@ import java.util.Objects;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import static hexlet.code.utils.Utils.FIRST_MAP_KEY;
+import static hexlet.code.utils.Utils.SECOND_MAP_KEY;
+
 public class Parser {
 
     public static Map<String, Map<String, String>> parseFileData(String filePath1, String filePath2) throws Exception {
@@ -39,8 +42,8 @@ public class Parser {
             mapper = new ObjectMapper(new YAMLFactory());
         }
 
-        result.put(filePath1, getFileData(filePath1, mapper));
-        result.put(filePath2, getFileData(filePath2, mapper));
+        result.put(FIRST_MAP_KEY, getFileData(filePath1, mapper));
+        result.put(SECOND_MAP_KEY, getFileData(filePath2, mapper));
 
         return result;
     }
@@ -69,11 +72,11 @@ public class Parser {
             while (fieldsIterator.hasNext()) {
                 Map.Entry<String, JsonNode> field = fieldsIterator.next();
                 JsonNodeType nodeType = field.getValue().getNodeType();
-                if (nodeType.equals(JsonNodeType.STRING)) {
-                    result.put(field.getKey(), field.getValue().asText());
-                } else {
-                    result.put(field.getKey(), field.getValue().toString());
-                }
+//                if (nodeType.equals(JsonNodeType.STRING)) {
+//                    result.put(field.getKey(), field.getValue().asText());
+//                } else {
+                result.put(field.getKey(), field.getValue().toString());
+//                }
             }
         } catch (IOException err) {
             throw new IOException(String.format("Incorrect format of the file '%s'", fileName));

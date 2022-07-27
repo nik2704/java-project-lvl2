@@ -1,8 +1,16 @@
 package hexlet.code.utils;
 
+import java.util.List;
 import java.util.Map;
 
 public class Utils {
+    public static final String FIRST_MAP_KEY = "first";
+    public static final String SECOND_MAP_KEY = "second";
+    public static final String ITEM_UNCHANGED = "unchanged";
+    public static final String ITEM_CHANGED = "changed";
+    public static final String ITEM_DELETED = "deleted";
+    public static final String ITEM_ADDED = "added";
+    public static final List<String> OUTPUT_FORMAT_LIST = List.of("stylish", "plain");
     private static final Map<String, String> FORMAT_NAMES  = Map.of(
             "json", "json",
             "yaml", "yaml",

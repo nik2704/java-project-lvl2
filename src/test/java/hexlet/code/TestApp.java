@@ -49,6 +49,34 @@ public final class TestApp {
     }
 
     @Test
+    public void testPlainFormat() {
+        try {
+            String corresctAnswer1 = "Property 'chars2' was updated. From [complex value] to false\n"
+                    + "Property 'checked' was updated. From false to true\n"
+                    + "Property 'default' was updated. From null to [complex value]\n"
+                    + "Property 'id' was updated. From 45 to null\n"
+                    + "Property 'key1' was removed\n"
+                    + "Property 'key2' was added with value: 'value2'\n"
+                    + "Property 'numbers2' was updated. From [complex value] to [complex value]\n"
+                    + "Property 'numbers3' was removed\n"
+                    + "Property 'numbers4' was added with value: [complex value]\n"
+                    + "Property 'obj1' was added with value: [complex value]\n"
+                    + "Property 'setting1' was updated. From 'Some value' to 'Another value'\n"
+                    + "Property 'setting2' was updated. From 200 to 300\n"
+                    + "Property 'setting3' was updated. From true to 'none'";
+
+            String diff1json = Differ.generate(fileNestedPath1, fileNestedPath2, "plain");
+            assertThat(diff1json).isEqualTo(corresctAnswer1);
+
+            String diff1yml = Differ.generate(yamlFileNestedPath1, yamlFileNestedPath2, "plain");
+            assertThat(diff1yml).isEqualTo(corresctAnswer1);
+        } catch (Exception err) {
+            System.out.println("ERROR has appeared in 'generate' method while testing PLAIN format: "
+                    + err.getMessage());
+        }
+    }
+
+    @Test
     public void testJsonComparison() {
         try {
             String correctAnswer1 = "{\n"

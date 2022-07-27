@@ -1,19 +1,20 @@
 package hexlet.code;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.HashSet;
 
+import static hexlet.code.utils.Utils.ITEM_ADDED;
+import static hexlet.code.utils.Utils.ITEM_CHANGED;
+import static hexlet.code.utils.Utils.ITEM_DELETED;
+import static hexlet.code.utils.Utils.ITEM_UNCHANGED;
+import static hexlet.code.utils.Utils.FIRST_MAP_KEY;
+import static hexlet.code.utils.Utils.SECOND_MAP_KEY;
+import static hexlet.code.utils.Utils.OUTPUT_FORMAT_LIST;
 
 public final class Differ {
-    private static final String ITEM_UNCHANGED = "unchanged";
-    private static final String ITEM_CHANGED = "changed";
-    private static final String ITEM_DELETED = "deleted";
-    private static final String ITEM_ADDED = "added";
-    private static final List<String> OUTPUT_FORMAT_LIST = List.of("stylish");
 
     public static String generate(String filePath1, String filePath2, String outputFormat) throws Exception {
         checkParametres(filePath1, filePath2, outputFormat);
@@ -21,12 +22,9 @@ public final class Differ {
         outputFormat = outputFormat.toLowerCase();
 
         Map<String, Map<String, String>> fileData = Parser.parseFileData(filePath1, filePath2);
+        Map<String, String> differences = getDifference(fileData);
 
-        String result = getDifference(
-                fileData.get(filePath1),
-                fileData.get(filePath2),
-                outputFormat
-        );
+        String result = Formatter.getFormattedData(fileData, differences, outputFormat);
 
         System.out.println(result);
         return result;
@@ -50,76 +48,12 @@ public final class Differ {
         }
     }
 
-    public static String getDifference(Map<String, String> map1, Map<String, String> map2, String outputFormat) {
+    public static Map<String, String> getDifference(Map<String, Map<String, String>> fileData) {
         StringBuilder result = new StringBuilder();
-        Map<String, String> differences = getKeysStatus(map1, map2);
+        Map<String, String> map1 = fileData.get(FIRST_MAP_KEY);
+        Map<String, String> map2 = fileData.get(SECOND_MAP_KEY);
 
-        if (differences.size() > 0) {
-            result.append("{\n");
-            differences.entrySet().stream()
-                    .sorted(Map.Entry.comparingByKey())
-                    .forEach(mapEntry -> {
-                        String v1 = map1.get(mapEntry.getKey());
-                        String v2 = map2.get(mapEntry.getKey());
-
-                        switch (mapEntry.getValue()) {
-                            case (ITEM_UNCHANGED):
-                                result.append(getFormattedString(mapEntry.getKey(), v1, ITEM_UNCHANGED, outputFormat));
-                                break;
-                            case (ITEM_CHANGED):
-                                result.append(getFormattedString(mapEntry.getKey(), v1, ITEM_DELETED, outputFormat));
-                                result.append(getFormattedString(mapEntry.getKey(), v2, ITEM_ADDED, outputFormat));
-                                break;
-                            case (ITEM_DELETED):
-                                result.append(getFormattedString(mapEntry.getKey(), v1, ITEM_DELETED, outputFormat));
-                                break;
-                            case (ITEM_ADDED):
-                                result.append(getFormattedString(mapEntry.getKey(), v2, ITEM_ADDED, outputFormat));
-                                break;
-                            default:
-                        }
-                    });
-            result.append("}");
-        } else {
-            result.append("{}");
-        }
-
-        return result.toString();
-    }
-
-    private static String getFormattedString(String key, String value, String event, String outputFormat) {
-        switch (outputFormat) {
-            default:
-                return stylish(key, value, event);
-        }
-    }
-    private static String stylish(String key, String value, String event) {
-        char mark = ' ';
-        switch (event) {
-            case (ITEM_ADDED):
-                mark = '+';
-                break;
-            case (ITEM_DELETED):
-                mark = '-';
-                break;
-            default:
-        }
-
-        value = value
-            .replace("[\"", "[")
-            .replace("\"]", "]")
-            .replace("{\"", "{")
-            .replace("\"}", "}")
-            .replaceAll("\"", "")
-            .replaceAll(",", ", ")
-            .replaceAll(":", "=");
-
-        return String.format("  %c %s: %s\n", mark, key, value);
-    }
-
-    private static Map<String, String> getKeysStatus(Map<String, String> map1, Map<String, String> map2) {
         Map<String, String> differences = new HashMap<>();
-
         Set<String> set = new HashSet<>();
         set.addAll(map1.keySet());
         set.addAll(map2.keySet());
@@ -145,5 +79,4 @@ public final class Differ {
 
         return differences;
     }
-
 }
