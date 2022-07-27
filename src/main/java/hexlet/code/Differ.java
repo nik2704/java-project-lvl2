@@ -16,6 +16,9 @@ import static hexlet.code.utils.Utils.OUTPUT_FORMAT_LIST;
 
 public final class Differ {
 
+    public static String generate(String filePath1, String filePath2) throws Exception {
+        return generate(filePath1, filePath2, "stylish");
+    }
     public static String generate(String filePath1, String filePath2, String outputFormat) throws Exception {
         checkParametres(filePath1, filePath2, outputFormat);
 
