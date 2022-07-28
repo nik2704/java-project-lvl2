@@ -50,15 +50,19 @@ public class Plain {
         return result.toString();
     }
 
-    private static String getStringFormatted(String key, String value1, String value2) {
-        return String.format("Property '%S' was updated. From %s to %s\n",
-                key, getValueFormatted(value1), getValueFormatted(value2));
-    }
-
     private static String getValueFormatted(String value) {
-        return value
+        if (value.matches("\\d+") || value.matches("true|false") || value.matches("null")) {
+            return value;
+        }
+
+        value = value
                 .replaceAll("^\\{.*\\}$", "[complex value]")
-                .replaceAll("^\\[.*\\]$", "[complex value]")
-                .replaceAll("\"", "'");
+                .replaceAll("^\\[.*\\]$", "[complex value]");
+
+        if (!value.equals("[complex value]")) {
+            value = "'" + value + "'";
+        }
+
+        return value;
     }
 }

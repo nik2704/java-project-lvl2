@@ -63,32 +63,17 @@ public class Json {
     private static Map<String, String> getKeyMapObject(String status, String v) {
         LinkedHashMap<String, String> result = new LinkedHashMap<>();
         result.put("status", status);
-        result.put("value", getValueFormatted(v));
+        result.put("value", v);
 
         return result;
     }
 
     private static Map<String, String> getKeyMapObject(String status, String v1, String v2) {
-//        Map<String, String> sortMap = new TreeMap<String, String>(new MapKeyComparator());
         LinkedHashMap<String, String> result = new LinkedHashMap<>();
         result.put("status", status);
-        result.put("value", getValueFormatted(v2));
-        result.put("oldValue", getValueFormatted(v1));
+        result.put("value", v2);
+        result.put("oldValue", v1);
 
         return result;
-//        return Map.of(
-//                "status", status,
-//                "oldValue", getValueFormatted(v1),
-//                "newValue", getValueFormatted(v2));
-    }
-    private static String getValueFormatted(String value) {
-        return value
-                .replace("[\"", "[")
-                .replace("\"]", "]")
-                .replace("{\"", "{")
-                .replace("\"}", "}")
-                .replaceAll("\"", "")
-                .replaceAll(",", ", ")
-                .replaceAll(":", "=");
     }
 }

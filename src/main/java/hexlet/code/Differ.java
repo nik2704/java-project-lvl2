@@ -1,5 +1,10 @@
 package hexlet.code;
 
+import hexlet.code.utils.Utils;
+import org.apache.commons.io.FilenameUtils;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -24,7 +29,11 @@ public final class Differ {
 
         outputFormat = outputFormat.toLowerCase();
 
-        Map<String, Map<String, String>> fileData = Parser.parseFileData(filePath1, filePath2);
+        Map<String, Map<String, String>> fileData = new HashMap<>();
+
+        fileData.put(FIRST_MAP_KEY, Parser.parseFileData(filePath1));
+        fileData.put(SECOND_MAP_KEY, Parser.parseFileData(filePath2));
+
         Map<String, String> differences = getDifference(fileData);
 
         String result = Formatter.getFormattedData(fileData, differences, outputFormat);
@@ -46,8 +55,31 @@ public final class Differ {
             throw new NullPointerException("The FORMAT must not be not empty!");
         }
 
+        checkFile(filePath1);
+        checkFile(filePath2);
+
+        String fileFormat1 = Utils.getFormatName(FilenameUtils.getExtension(filePath1));
+        String fileFormat2 = Utils.getFormatName(FilenameUtils.getExtension(filePath2));
+
+        if (!Objects.equals(fileFormat1, fileFormat2)) {
+            throw new Exception(String.format("Formats of the files are different: '%s' and '%s'",
+                    fileFormat1, fileFormat2));
+        }
+
         if (!OUTPUT_FORMAT_LIST.contains(outputFormat.toLowerCase())) {
             throw new Exception(String.format("There is no such format '%s'", outputFormat));
+        }
+    }
+
+    private static void checkFile(String fileName) throws IOException {
+        File file = new File(fileName);
+
+        if (!file.isFile()) {
+            throw new IOException(String.format("There is no file with name '%s'", fileName));
+        }
+
+        if (!file.canRead()) {
+            throw new IOException(String.format("Unable to read the file '%s'", fileName));
         }
     }
 
