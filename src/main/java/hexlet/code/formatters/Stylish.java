@@ -51,14 +51,14 @@ public class Stylish {
     }
 
     private static String getStringFormatted(String key, String value, char mark) {
-        value = value
-                .replace("[\"", "[")
-                .replace("\"]", "]")
-                .replace("{\"", "{")
-                .replace("\"}", "}")
-                .replaceAll("\"", "")
-                .replaceAll(",", ", ")
-                .replaceAll(":", "=");
+//        value = value
+//                .replace("[\"", "[")
+//                .replace("\"]", "]")
+//                .replace("{\"", "{")
+//                .replace("\"}", "}")
+//                .replaceAll("\"", "")
+////                .replaceAll(",", ", ")
+//                .replaceAll(":", "=");
 
         return String.format("  %c %s: %s\n", mark, key, value);
     }
