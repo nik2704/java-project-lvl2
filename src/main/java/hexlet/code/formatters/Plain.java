@@ -1,6 +1,7 @@
 package hexlet.code.formatters;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static hexlet.code.utils.Utils.ITEM_ADDED;
 import static hexlet.code.utils.Utils.ITEM_CHANGED;
@@ -10,19 +11,19 @@ import static hexlet.code.utils.Utils.FIRST_MAP_KEY;
 import static hexlet.code.utils.Utils.SECOND_MAP_KEY;
 
 public class Plain {
-    public static String getResult(Map<String, Map<String, String>> fileData,
+    public static String getResult(Map<String, Map<String, Object>> fileData,
                                    Map<String, String> differences) {
 
         StringBuilder result = new StringBuilder();
-        Map<String, String> map1 = fileData.get(FIRST_MAP_KEY);
-        Map<String, String> map2 = fileData.get(SECOND_MAP_KEY);
+        Map<String, Object> map1 = fileData.get(FIRST_MAP_KEY);
+        Map<String, Object> map2 = fileData.get(SECOND_MAP_KEY);
 
         if (differences.size() > 0) {
             differences.entrySet().stream()
                     .sorted(Map.Entry.comparingByKey())
                     .forEach(mapEntry -> {
-                        String v1 = map1.get(mapEntry.getKey());
-                        String v2 = map2.get(mapEntry.getKey());
+                        Object v1 = map1.get(mapEntry.getKey());
+                        Object v2 = map2.get(mapEntry.getKey());
 
                         if (result.length() > 0 && mapEntry.getValue() != ITEM_UNCHANGED) {
                             result.append("\n");
@@ -50,19 +51,21 @@ public class Plain {
         return result.toString();
     }
 
-    private static String getValueFormatted(String value) {
-        if (value.matches("\\d+") || value.matches("true|false") || value.matches("null")) {
-            return value;
+    private static String getValueFormatted(Object value) {
+        String result = Objects.toString(value);
+
+        if (result.matches("\\d+") || result.matches("true|false") || result.matches("null")) {
+            return result;
         }
 
-        value = value
+        result = result
                 .replaceAll("^\\{.*\\}$", "[complex value]")
                 .replaceAll("^\\[.*\\]$", "[complex value]");
 
-        if (!value.equals("[complex value]")) {
-            value = "'" + value + "'";
+        if (!result.equals("[complex value]")) {
+            result = "'" + result + "'";
         }
 
-        return value;
+        return result;
     }
 }

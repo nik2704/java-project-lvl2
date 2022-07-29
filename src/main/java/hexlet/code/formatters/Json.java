@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static hexlet.code.utils.Utils.ITEM_ADDED;
 import static hexlet.code.utils.Utils.ITEM_CHANGED;
@@ -15,21 +16,21 @@ import static hexlet.code.utils.Utils.FIRST_MAP_KEY;
 import static hexlet.code.utils.Utils.SECOND_MAP_KEY;
 
 public class Json {
-    public static String getResult(Map<String, Map<String, String>> fileData,
+    public static String getResult(Map<String, Map<String, Object>> fileData,
                                    Map<String, String> differences) {
 
-        Map<String, String> map1 = fileData.get(FIRST_MAP_KEY);
-        Map<String, String> map2 = fileData.get(SECOND_MAP_KEY);
+        Map<String, Object> map1 = fileData.get(FIRST_MAP_KEY);
+        Map<String, Object> map2 = fileData.get(SECOND_MAP_KEY);
         String result = "";
 
-        Map<String, Map<String, String>> payload = new HashMap<>();
+        Map<String, Map<String, Object>> payload = new HashMap<>();
 
         if (differences.size() > 0) {
             differences.entrySet().stream()
                     .sorted(Map.Entry.comparingByKey())
                     .forEach(mapEntry -> {
-                        String v1 = map1.get(mapEntry.getKey());
-                        String v2 = map2.get(mapEntry.getKey());
+                        Object v1 = map1.get(mapEntry.getKey());
+                        Object v2 = map2.get(mapEntry.getKey());
 
                         switch (mapEntry.getValue()) {
                             case (ITEM_UNCHANGED):
@@ -60,19 +61,19 @@ public class Json {
         return result;
     }
 
-    private static Map<String, String> getKeyMapObject(String status, String v) {
-        LinkedHashMap<String, String> result = new LinkedHashMap<>();
+    private static Map<String, Object> getKeyMapObject(String status, Object v) {
+        LinkedHashMap<String, Object> result = new LinkedHashMap<>();
         result.put("status", status);
-        result.put("value", v);
+        result.put("value", Objects.toString(v));
 
         return result;
     }
 
-    private static Map<String, String> getKeyMapObject(String status, String v1, String v2) {
-        LinkedHashMap<String, String> result = new LinkedHashMap<>();
+    private static Map<String, Object> getKeyMapObject(String status, Object v1, Object v2) {
+        LinkedHashMap<String, Object> result = new LinkedHashMap<>();
         result.put("status", status);
-        result.put("value", v2);
-        result.put("oldValue", v1);
+        result.put("value", Objects.toString(v2));
+        result.put("oldValue", Objects.toString(v1));
 
         return result;
     }

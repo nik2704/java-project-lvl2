@@ -10,20 +10,20 @@ import static hexlet.code.utils.Utils.FIRST_MAP_KEY;
 import static hexlet.code.utils.Utils.SECOND_MAP_KEY;
 
 public class Stylish {
-    public static String getResult(Map<String, Map<String, String>> fileData,
+    public static String getResult(Map<String, Map<String, Object>> fileData,
                                    Map<String, String> differences) {
 
         StringBuilder result = new StringBuilder();
-        Map<String, String> map1 = fileData.get(FIRST_MAP_KEY);
-        Map<String, String> map2 = fileData.get(SECOND_MAP_KEY);
+        Map<String, Object> map1 = fileData.get(FIRST_MAP_KEY);
+        Map<String, Object> map2 = fileData.get(SECOND_MAP_KEY);
 
         if (differences.size() > 0) {
             result.append("{\n");
             differences.entrySet().stream()
                     .sorted(Map.Entry.comparingByKey())
                     .forEach(mapEntry -> {
-                        String v1 = map1.get(mapEntry.getKey());
-                        String v2 = map2.get(mapEntry.getKey());
+                        Object v1 = map1.get(mapEntry.getKey());
+                        Object v2 = map2.get(mapEntry.getKey());
 
                         switch (mapEntry.getValue()) {
                             case (ITEM_UNCHANGED):
@@ -50,16 +50,7 @@ public class Stylish {
         return result.toString();
     }
 
-    private static String getStringFormatted(String key, String value, char mark) {
-//        value = value
-//                .replace("[\"", "[")
-//                .replace("\"]", "]")
-//                .replace("{\"", "{")
-//                .replace("\"}", "}")
-//                .replaceAll("\"", "")
-////                .replaceAll(",", ", ")
-//                .replaceAll(":", "=");
-
+    private static String getStringFormatted(String key, Object value, char mark) {
         return String.format("  %c %s: %s\n", mark, key, value);
     }
 }

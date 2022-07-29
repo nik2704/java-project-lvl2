@@ -7,7 +7,7 @@ import hexlet.code.formatters.Stylish;
 import java.util.Map;
 
 public class Formatter {
-    public static String getFormattedData(Map<String, Map<String, String>> fileData,
+    public static String getFormattedData(Map<String, Map<String, Object>> fileData,
                                           Map<String, String> differences,
                                           String outputFormat) {
         switch (outputFormat) {

@@ -29,12 +29,13 @@ public final class Differ {
 
         outputFormat = outputFormat.toLowerCase();
 
-        Map<String, Map<String, String>> fileData = new HashMap<>();
+        Map<String, Map<String, Object>> fileData = new HashMap<>();
 
         fileData.put(FIRST_MAP_KEY, Parser.parseFileData(filePath1));
         fileData.put(SECOND_MAP_KEY, Parser.parseFileData(filePath2));
 
         Map<String, String> differences = getDifference(fileData);
+//        System.out.println(differences);
 
         String result = Formatter.getFormattedData(fileData, differences, outputFormat);
 
@@ -83,10 +84,10 @@ public final class Differ {
         }
     }
 
-    public static Map<String, String> getDifference(Map<String, Map<String, String>> fileData) {
+    public static Map<String, String> getDifference(Map<String, Map<String, Object>> fileData) {
         StringBuilder result = new StringBuilder();
-        Map<String, String> map1 = fileData.get(FIRST_MAP_KEY);
-        Map<String, String> map2 = fileData.get(SECOND_MAP_KEY);
+        Map<String, Object> map1 = fileData.get(FIRST_MAP_KEY);
+        Map<String, Object> map2 = fileData.get(SECOND_MAP_KEY);
 
         Map<String, String> differences = new HashMap<>();
         Set<String> set = new HashSet<>();
