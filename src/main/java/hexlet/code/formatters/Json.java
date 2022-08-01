@@ -12,15 +12,10 @@ import static hexlet.code.utils.Utils.ITEM_ADDED;
 import static hexlet.code.utils.Utils.ITEM_CHANGED;
 import static hexlet.code.utils.Utils.ITEM_DELETED;
 import static hexlet.code.utils.Utils.ITEM_UNCHANGED;
-import static hexlet.code.utils.Utils.FIRST_MAP_KEY;
-import static hexlet.code.utils.Utils.SECOND_MAP_KEY;
 
 public class Json {
-    public static String getResult(Map<String, Map<String, Object>> fileData,
-                                   Map<String, String> differences) {
+    public static String getResult(Map<String, Map<String, Object>> differences) {
 
-        Map<String, Object> map1 = fileData.get(FIRST_MAP_KEY);
-        Map<String, Object> map2 = fileData.get(SECOND_MAP_KEY);
         String result = "";
 
         Map<String, Map<String, Object>> payload = new HashMap<>();
@@ -29,21 +24,29 @@ public class Json {
             differences.entrySet().stream()
                     .sorted(Map.Entry.comparingByKey())
                     .forEach(mapEntry -> {
-                        Object v1 = map1.get(mapEntry.getKey());
-                        Object v2 = map2.get(mapEntry.getKey());
+                        Map<String, Object> currentMap = mapEntry.getValue();
 
-                        switch (mapEntry.getValue()) {
+                        switch (currentMap.get("comparisonResult").toString()) {
                             case (ITEM_UNCHANGED):
-                                payload.put(mapEntry.getKey(), getKeyMapObject("unchanged", v1));
+                                payload.put(mapEntry.getKey(),
+                                        getKeyMapObject("unchanged",
+                                                currentMap.get("value")));
                                 break;
                             case (ITEM_CHANGED):
-                                payload.put(mapEntry.getKey(), getKeyMapObject("changed", v1, v2));
+                                payload.put(mapEntry.getKey(),
+                                        getKeyMapObject("changed",
+                                                currentMap.get("oldValue"),
+                                                currentMap.get("value")));
                                 break;
                             case (ITEM_DELETED):
-                                payload.put(mapEntry.getKey(), getKeyMapObject("deleted", v1));
+                                payload.put(mapEntry.getKey(),
+                                        getKeyMapObject("deleted",
+                                                currentMap.get("oldValue")));
                                 break;
                             case (ITEM_ADDED):
-                                payload.put(mapEntry.getKey(), getKeyMapObject("added", v2));
+                                payload.put(mapEntry.getKey(),
+                                        getKeyMapObject("added",
+                                                currentMap.get("value")));
                                 break;
                             default:
                         }

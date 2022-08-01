@@ -22,12 +22,6 @@ public final class App implements Callable<Integer> {
             description = "output format [default: ${DEFAULT-VALUE}]")
     private String outputFormat;
 
-//    @Option(names = {"-h", "--help"}, usageHelp = true, description = "Show this help message and exit.")
-//    private boolean usageHelpRequested;
-
-//    @Option(names = {"-V", "--version"}, versionHelp = true, description = "Print version information and exit.")
-//    private boolean versionInfoRequested;
-
     @Parameters(paramLabel = "filepath1", index = "0", description = "path to first file")
     private String filePath1;
 
@@ -35,16 +29,7 @@ public final class App implements Callable<Integer> {
     private String filePath2;
 
     public static void main(String[] args) throws Exception {
-        int exitCode = 0;
-        CommandLine commandLine = new CommandLine(new App());
-        commandLine.parseArgs(args);
-        if (commandLine.isUsageHelpRequested()) {
-            commandLine.usage(System.out);
-        } else if (commandLine.isVersionHelpRequested()) {
-            commandLine.printVersionHelp(System.out);
-        } else {
-            exitCode = commandLine.execute(args);
-        }
+        int exitCode = new CommandLine(new App()).execute(args);
         System.exit(exitCode);
     }
 
@@ -52,6 +37,7 @@ public final class App implements Callable<Integer> {
     public Integer call() throws Exception {
         try {
             String diff = Differ.generate(this.filePath1, this.filePath2, this.outputFormat);
+            System.out.println(diff);
         } catch (IOException err) {
             System.out.println("Unable to process: " + err.getMessage());
         } catch (Exception err) {
