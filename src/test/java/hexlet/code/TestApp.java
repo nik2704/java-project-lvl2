@@ -44,20 +44,20 @@ public final class TestApp {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "file1nested.json, file2nested.json, jsonFormat.json, json",
-            "file1nested.yaml, file2nested.yaml, jsonFormat.json, json",
-            "file1nested.json, file2nested.json, plainFormat.txt, plain",
-            "file1nested.yaml, file2nested.yaml, plainFormat.txt, plain",
-            "file1.json, file2.json, stylishFormat1.txt, stylish",
-            "file1.yaml, file2.yaml, stylishFormat1.txt, stylish",
-            "file2.json, file1.json, stylishFormat2.txt, stylish",
-            "file2.yaml, file1.yaml, stylishFormat2.txt, stylish",
-            "empty.json, file2.json, stylishFormat4.txt, stylish",
-            "empty.yml, file2.yaml, stylishFormat4.txt, stylish",
-            "file2.json, empty.json, stylishFormat5.txt, stylish",
-            "file2.yaml, empty.yml, stylishFormat5.txt, stylish",
-            "file1nested.json, file2nested.json, stylishFormat6.txt, stylish",
-            "file1nested.yaml, file2nested.yaml, stylishFormat6.txt, stylish"
+        "file1nested.json, file2nested.json, jsonFormat.json, json",
+        "file1nested.yaml, file2nested.yaml, jsonFormat.json, json",
+        "file1nested.json, file2nested.json, plainFormat.txt, plain",
+        "file1nested.yaml, file2nested.yaml, plainFormat.txt, plain",
+        "file1.json, file2.json, stylishFormat1.txt, stylish",
+        "file1.yaml, file2.yaml, stylishFormat1.txt, stylish",
+        "file2.json, file1.json, stylishFormat2.txt, stylish",
+        "file2.yaml, file1.yaml, stylishFormat2.txt, stylish",
+        "empty.json, file2.json, stylishFormat4.txt, stylish",
+        "empty.yml, file2.yaml, stylishFormat4.txt, stylish",
+        "file2.json, empty.json, stylishFormat5.txt, stylish",
+        "file2.yaml, empty.yml, stylishFormat5.txt, stylish",
+        "file1nested.json, file2nested.json, stylishFormat6.txt, stylish",
+        "file1nested.yaml, file2nested.yaml, stylishFormat6.txt, stylish"
         }, ignoreLeadingAndTrailingWhitespace = true)
     public void testJsonFormat(String file1, String file2, String fileAnswer, String format) throws Exception {
         String corresctAnswer1 = readFile(resourceDirectory.toFile().getAbsolutePath()
@@ -86,24 +86,24 @@ public final class TestApp {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "wrongFileName.json,file2.json,stylish,java.io.IOException",
-            "file2.json,wrongFileName.json,stylish,java.io.IOException",
-            "wrongFileName.yml,file2.yaml,stylish,java.io.IOException",
-            "file2.yaml,wrongFileName.yml,stylish,java.io.IOException",
-            ", file2.json,stylish,java.lang.NullPointerException",
-            "file1.json,,stylish,java.lang.NullPointerException",
-            " ,file2.json,stylish,java.lang.NullPointerException",
-            "file1.json, ,stylish,java.lang.NullPointerException",
-            ", file2.yaml,stylish,java.lang.NullPointerException",
-            "file1.yaml,,stylish,java.lang.NullPointerException",
-            " ,file2.yaml,stylish,java.lang.NullPointerException",
-            "file1.yaml, ,stylish,java.lang.NullPointerException",
-            "file2.json,file2.json,incorrectFormat,java.lang.Exception",
-            "file2.json,file2.json, ,java.lang.Exception",
-            "file2.json,file2.json,,java.lang.Exception",
-            "file2.yaml,file2.yaml,incorrectFormat,java.lang.Exception",
-            "file2.yaml,file2.yaml, ,java.lang.Exception",
-            "file2.yaml,file2.yaml,,java.lang.Exception"
+        "wrongFileName.json,file2.json,stylish,java.io.IOException",
+        "file2.json,wrongFileName.json,stylish,java.io.IOException",
+        "wrongFileName.yml,file2.yaml,stylish,java.io.IOException",
+        "file2.yaml,wrongFileName.yml,stylish,java.io.IOException",
+        ", file2.json,stylish,java.lang.NullPointerException",
+        "file1.json,,stylish,java.lang.NullPointerException",
+        " ,file2.json,stylish,java.lang.NullPointerException",
+        "file1.json, ,stylish,java.lang.NullPointerException",
+        ", file2.yaml,stylish,java.lang.NullPointerException",
+        "file1.yaml,,stylish,java.lang.NullPointerException",
+        " ,file2.yaml,stylish,java.lang.NullPointerException",
+        "file1.yaml, ,stylish,java.lang.NullPointerException",
+        "file2.json,file2.json,incorrectFormat,java.lang.Exception",
+        "file2.json,file2.json, ,java.lang.Exception",
+        "file2.json,file2.json,,java.lang.Exception",
+        "file2.yaml,file2.yaml,incorrectFormat,java.lang.Exception",
+        "file2.yaml,file2.yaml, ,java.lang.Exception",
+        "file2.yaml,file2.yaml,,java.lang.Exception"
         })
     public void testJsonWrongFileComparison1(String file1, String file2, String format, Class type) {
         final String f1 = file1 != null ? resourceDirectory.toFile().getAbsolutePath() + "/" + file1 : null;

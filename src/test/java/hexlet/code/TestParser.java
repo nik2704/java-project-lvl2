@@ -29,8 +29,8 @@ public final class TestParser {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "file1.json, json",
-            "file1.yaml, yaml"
+        "file1.json, json",
+        "file1.yaml, yaml"
         }, ignoreLeadingAndTrailingWhitespace = true)
     public void testParserJson(String fileName, String formatName) throws Exception {
         Map<String, Object> expected1 = Map.of(
@@ -47,8 +47,8 @@ public final class TestParser {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "file1.json, csv, java.lang.Exception",
-            "file1.yaml, csv, java.lang.Exception"
+        "file1.json, csv, java.lang.Exception",
+        "file1.yaml, csv, java.lang.Exception"
         }, ignoreLeadingAndTrailingWhitespace = true)
     public void testJsonWrongFileComparison1(String fileName, String formatName, Class type) {
         String jsonData = readFile(resourceDirectory.toFile().getAbsolutePath() + "/" + fileName);
