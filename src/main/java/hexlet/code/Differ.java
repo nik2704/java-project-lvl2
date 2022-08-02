@@ -96,14 +96,20 @@ public final class Differ {
 //        Map<String, String> differences = new HashMap<>();
         Map<String, Map<String, Object>> differences = new HashMap<>();
         Set<String> set = new HashSet<>();
-        set.addAll(map1.keySet());
-        set.addAll(map2.keySet());
+
+        if (!Objects.isNull(map1)) {
+            set.addAll(map1.keySet());
+        }
+
+        if (!Objects.isNull(map2)) {
+            set.addAll(map2.keySet());
+        }
 
         set.stream()
                 .sorted()
                 .forEach(keyLine -> {
-                    boolean keyInV1 = map1.containsKey(keyLine);
-                    boolean keyInV2 = map2.containsKey(keyLine);
+                    boolean keyInV1 = Objects.isNull(map1) ? false : map1.containsKey(keyLine);
+                    boolean keyInV2 = Objects.isNull(map2) ? false : map2.containsKey(keyLine);
                     Map<String, Object> currentMap = new HashMap<>();
 
                     String value = ITEM_UNCHANGED;
