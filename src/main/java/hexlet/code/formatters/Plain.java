@@ -2,6 +2,8 @@ package hexlet.code.formatters;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import static hexlet.code.utils.Utils.ITEM_ADDED;
 import static hexlet.code.utils.Utils.ITEM_CHANGED;
@@ -50,20 +52,13 @@ public class Plain {
     }
 
     private static String getValueFormatted(Object value) {
-        String result = Objects.toString(value);
 
-        if (result.matches("\\d+") || result.matches("true|false") || result.matches("null")) {
-            return result;
+        if ((value instanceof ArrayList) || (value instanceof LinkedHashMap)) {
+            return "[complex value]";
+        } else if (value instanceof String) {
+            return "'" + Objects.toString(value) + "'";
         }
 
-        result = result
-                .replaceAll("^\\{.*\\}$", "[complex value]")
-                .replaceAll("^\\[.*\\]$", "[complex value]");
-
-        if (!result.equals("[complex value]")) {
-            result = "'" + result + "'";
-        }
-
-        return result;
+        return Objects.toString(value);
     }
 }

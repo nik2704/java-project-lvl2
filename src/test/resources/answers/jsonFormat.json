@@ -1,70 +1,73 @@
 {
   "key1" : {
-    "status" : "deleted",
-    "value" : "value1"
+    "comparisonResult" : "deleted",
+    "oldValue" : "value1"
   },
   "setting2" : {
-    "status" : "changed",
-    "value" : "300",
-    "oldValue" : "200"
+    "comparisonResult" : "changed",
+    "oldValue" : 200,
+    "value" : 300
   },
   "key2" : {
-    "status" : "added",
+    "comparisonResult" : "added",
     "value" : "value2"
   },
   "setting3" : {
-    "status" : "changed",
-    "value" : "none",
-    "oldValue" : "true"
+    "comparisonResult" : "changed",
+    "oldValue" : true,
+    "value" : "none"
   },
   "chars2" : {
-    "status" : "changed",
-    "value" : "false",
-    "oldValue" : "[d, e, f]"
+    "comparisonResult" : "changed",
+    "oldValue" : [ "d", "e", "f" ],
+    "value" : false
   },
   "chars1" : {
-    "status" : "unchanged",
-    "value" : "[a, b, c]"
+    "comparisonResult" : "unchanged",
+    "value" : [ "a", "b", "c" ]
   },
   "setting1" : {
-    "status" : "changed",
-    "value" : "Another value",
-    "oldValue" : "Some value"
+    "comparisonResult" : "changed",
+    "oldValue" : "Some value",
+    "value" : "Another value"
   },
   "numbers4" : {
-    "status" : "added",
-    "value" : "[4, 5, 6]"
+    "comparisonResult" : "added",
+    "value" : [ 4, 5, 6 ]
   },
   "numbers3" : {
-    "status" : "deleted",
-    "value" : "[3, 4, 5]"
+    "comparisonResult" : "deleted",
+    "oldValue" : [ 3, 4, 5 ]
   },
   "numbers2" : {
-    "status" : "changed",
-    "value" : "[22, 33, 44, 55]",
-    "oldValue" : "[2, 3, 4, 5]"
+    "comparisonResult" : "changed",
+    "oldValue" : [ 2, 3, 4, 5 ],
+    "value" : [ 22, 33, 44, 55 ]
   },
   "numbers1" : {
-    "status" : "unchanged",
-    "value" : "[1, 2, 3, 4]"
+    "comparisonResult" : "unchanged",
+    "value" : [ 1, 2, 3, 4 ]
   },
   "obj1" : {
-    "status" : "added",
-    "value" : "{nestedKey=value, isNested=true}"
+    "comparisonResult" : "added",
+    "value" : {
+      "nestedKey" : "value",
+      "isNested" : true
+    }
   },
   "default" : {
-    "status" : "changed",
-    "value" : "[value1, value2]",
-    "oldValue" : "null"
+    "comparisonResult" : "changed",
+    "oldValue" : null,
+    "value" : [ "value1", "value2" ]
   },
   "checked" : {
-    "status" : "changed",
-    "value" : "true",
-    "oldValue" : "false"
+    "comparisonResult" : "changed",
+    "oldValue" : false,
+    "value" : true
   },
   "id" : {
-    "status" : "changed",
-    "value" : "null",
-    "oldValue" : "45"
+    "comparisonResult" : "changed",
+    "oldValue" : 45,
+    "value" : null
   }
 }

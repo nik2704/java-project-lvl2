@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public final class TestApp {
+public final class AppTest {
     private Path resourceDirectory = Paths.get("src", "test", "resources");
     private String filePath1;
     private String emptyJsonFile;

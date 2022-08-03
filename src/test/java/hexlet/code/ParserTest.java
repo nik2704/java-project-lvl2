@@ -1,5 +1,6 @@
 package hexlet.code;
 
+import hexlet.code.utils.Utils;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -12,8 +13,9 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public final class TestParser {
+public final class ParserTest {
     private final int timeout = 50;
     private Path resourceDirectory = Paths.get("src", "test", "resources");
     private static String readFile(String path) {
@@ -41,7 +43,7 @@ public final class TestParser {
         );
 
         String jsonData = readFile(resourceDirectory.toFile().getAbsolutePath() + "/" + fileName);
-        Map<String, Object> actual1 = Parser.parseFileData(jsonData, formatName);
+        Map<String, Object> actual1 = Parser.parseFileData(jsonData, getFormat(formatName));
         assertThat(expected1).isEqualTo(actual1);
     }
 
@@ -52,7 +54,20 @@ public final class TestParser {
         }, ignoreLeadingAndTrailingWhitespace = true)
     public void testJsonWrongFileComparison1(String fileName, String formatName, Class type) {
         String jsonData = readFile(resourceDirectory.toFile().getAbsolutePath() + "/" + fileName);
-        assertThatThrownBy(() -> Parser.parseFileData(jsonData, formatName)).isInstanceOf(type);
+        assertThatThrownBy(() -> Parser.parseFileData(jsonData, getFormat(formatName))).isInstanceOf(type);
+    }
+
+    private Utils.FileFormats getFormat(String formatName) {
+        switch (formatName) {
+            case "json":
+                return Utils.FileFormats.JSON;
+            case "yaml":
+                return Utils.FileFormats.YAML;
+            case "yml":
+                return Utils.FileFormats.YAML;
+            default:
+                return null;
+        }
     }
 
 }

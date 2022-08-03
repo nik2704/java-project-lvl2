@@ -4,18 +4,20 @@ package hexlet.code;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import hexlet.code.utils.Utils.FileFormats;
+
 import java.util.Map;
 
 
 public class Parser {
 
-    public static Map<String, Object> parseFileData(String data, String dataFormat) throws Exception {
-        dataFormat = dataFormat.toLowerCase();
-        if (!dataFormat.equals("yaml") && !dataFormat.equals("json")) {
-            throw new Exception(String.format("Incorrect format '%s'", dataFormat));
+    public static Map<String, Object> parseFileData(String data, FileFormats dataFormat) throws Exception {
+        if (dataFormat == null) {
+            throw new Exception(String.format("Data format must have a value"));
         }
 
-        ObjectMapper mapper =  dataFormat.equals("yaml") ? new ObjectMapper(new YAMLFactory()) : new ObjectMapper();
+        ObjectMapper mapper = dataFormat.equals(FileFormats.YAML)
+                ? new ObjectMapper(new YAMLFactory()) : new ObjectMapper();
         return mapper.readValue(data, new TypeReference<Map<String, Object>>() { });
     }
 }

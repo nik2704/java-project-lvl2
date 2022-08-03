@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class Formatter {
     public static String getFormattedData(Map<String, Map<String, Object>> differences,
-                                          String outputFormat) {
+                                          String outputFormat) throws Exception {
         switch (outputFormat) {
             case ("json"):
                 return Json.getResult(differences);
