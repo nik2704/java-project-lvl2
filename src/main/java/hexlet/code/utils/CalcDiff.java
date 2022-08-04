@@ -11,7 +11,7 @@ import static hexlet.code.utils.Utils.ITEM_CHANGED;
 import static hexlet.code.utils.Utils.ITEM_DELETED;
 import static hexlet.code.utils.Utils.ITEM_ADDED;
 
-public class Differences {
+public class CalcDiff {
     public static Map<String, Map<String, Object>> getDifference(Map<String, Object> map1, Map<String, Object> map2) {
         Map<String, Map<String, Object>> differences = new HashMap<>();
         Set<String> set = new HashSet<>();

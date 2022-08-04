@@ -4,9 +4,6 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
@@ -40,11 +37,6 @@ public class Utils {
         }
 
         return FORMAT_NAMES.get(extension.toLowerCase());
-    }
-
-    public static String readFile(String path) throws Exception {
-        Path fullPath = Paths.get(path).toAbsolutePath().normalize();
-        return Files.readString(fullPath);
     }
 
     public static void checkParametres(String[] filePaths, String commonOutputFormat) throws Exception {
