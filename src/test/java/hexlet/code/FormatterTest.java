@@ -20,9 +20,9 @@ public final class FormatterTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "jsonFormat.json, jsonFormat.json, json",
-            "jsonFormat.json, plainFormat.txt, plain",
-            "jsonFormat.json, stylishFormat6.txt, stylish"
+        "jsonFormat.json, jsonFormat.json, json",
+        "jsonFormat.json, plainFormat.txt, plain",
+        "jsonFormat.json, stylishFormat6.txt, stylish"
         }, ignoreLeadingAndTrailingWhitespace = true)
     public void testFormatter(String jsonFileName, String fileName, String format) throws Exception {
         String data = readFile(resourceDirectory.toFile().getAbsolutePath() + "/answers/" + jsonFileName);
